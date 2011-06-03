@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    
+ 	<com.law.odbii.android.ODBIIView
+    	android:id="@+id/odbii"
+    	android:orientation="vertical"
+      	android:layout_width="match_parent"
+      	android:layout_height="match_parent"/>
+      	
+      	
+    <LinearLayout
+    	
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">  	
+ 		
+ 			<Button android:id="@+id/start_button" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Start Engine" android:maxHeight="50px"></Button>
+	 		<Button android:id="@+id/brake_button" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Brake" android:maxHeight="50px"></Button>
+ 			<Button android:id="@+id/gas_button"   android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Gas" android:maxHeight="50px"></Button>
+ 			<TextView android:text="     Simulation Mode" android:id="@+id/textView1" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>
+ 		
+ 	</LinearLayout>  
+    
+	  	
+</FrameLayout>
