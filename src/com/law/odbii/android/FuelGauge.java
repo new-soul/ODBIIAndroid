@@ -1,16 +1,13 @@
 package com.law.odbii.android;
 
-import java.text.NumberFormat;
-
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 
-public class Tachnometer {
-
-	Tachnometer() {}
-	void drawTachnometer(
+public class FuelGauge {
+	FuelGauge() {}
+	void drawFuelGuage(
 			Canvas canvas, 
 			Paint paint, 
 			Point center, 
@@ -21,20 +18,13 @@ public class Tachnometer {
 			double endingValue,
 			int    numberOfMajorIncrements)
 	{
-		int x_offsets[] = {5, 6, 6, 1, -4, -5, -10, -12};
-		int y_offsets[] = {5, 5, 8, 11, 13, 16, 16, 10};
 		
 		paint.setColor(Color.WHITE);
-		Paint paintText = new Paint(paint);
-		
+		Paint paintText = new Paint(paint);		
+		Paint paintThinLine = new Paint(paint);
 		
 		paint.setStrokeWidth(7);
-		
-		Paint paintThinLine = new Paint(paint);		
 		paintThinLine.setStrokeWidth(2);
-		
-		
-		
 		
 		//canvas.drawLine(0, 0, 500, 500, paint);
 		double inner1Radius = radius - (radius / 8.0);
@@ -44,40 +34,39 @@ public class Tachnometer {
 		double theta2 = startingAngle + increment / 2.0;
 		for (int i = 0; i < numberOfMajorIncrements; i++)
 		{
-			if (i > 5)
-			{
+			if (i == 0)
 				paint.setColor(Color.RED);
-				paint.setColor(Color.RED);
-			}
+			else
+				paint.setColor(Color.WHITE);
 			
-			// thick line:
+			
 			int startX = (int)(inner1Radius * Math.cos(theta) + (double)center.x);
 			int startY = (int)(inner1Radius * Math.sin(theta) + (double)center.y);
 			int stopX = (int)(radius * Math.cos(theta) + (double)center.x);
 			int stopY = (int)(radius * Math.sin(theta) + (double)center.y);
 			canvas.drawLine(startX, startY, stopX, stopY, paint);
 
-			// text:
-			canvas.drawText(NumberFormat.getInstance().format(i), 
-					startX + x_offsets[i], startY + y_offsets[i], paintText);
-			
-
-			// thin line:
 			startX = (int)(inner2Radius * Math.cos(theta2) + (double)center.x);
 			startY = (int)(inner2Radius * Math.sin(theta2) + (double)center.y);
 			stopX = (int)(radius * Math.cos(theta2) + (double)center.x);
 			stopY = (int)(radius * Math.sin(theta2) + (double)center.y);
-			if (i != numberOfMajorIncrements - 1)
-				canvas.drawLine(startX, startY, stopX, stopY, paintThinLine);
 			
 
-			
+			if (i != numberOfMajorIncrements - 1)
+				canvas.drawLine(startX, startY, stopX, stopY, paintThinLine);
 			
 			theta += increment;
 			theta2 += increment;
 			
-			
-			
 		}
+		paint.setTextSize(22);
+		int x_pos = (int)(radius * Math.cos(startingAngle) + (double)center.x);
+		int y_pos = (int)(radius * Math.sin(startingAngle) + (double)center.y);
+		canvas.drawText("E", 
+				x_pos + 0, y_pos + 22, paintText);
+		x_pos = (int)(radius * Math.cos(theta) + (double)center.x);
+		y_pos = (int)(radius * Math.sin(theta) + (double)center.y);
+		canvas.drawText("F", 
+				x_pos - 27, y_pos + 5, paintText);
 	}
 }

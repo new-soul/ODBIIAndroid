@@ -33,21 +33,25 @@ public class ODBIIView extends SurfaceView implements SurfaceHolder.Callback {
 	private static final float fullDecel = 50.0f; // miles/s/s when foot is on the brake
 	private static final float minDecel  = 1.0f;  // miles/s/s when foot is off the gas
 	
-	private static final int ODOMETER_CENTER_X_PERCENT_PORT = 30;
-	private static final int ODOMETER_CENTER_Y_PERCENT_PORT = 12;
-	private static final float ODOMETER_SCALE_X_PORT = 0.6f;
-	private static final float ODOMETER_SCALE_Y_PORT = 0.6f;
+	private static final int ODOMETER_CENTER_X_PERCENT_PORT = 50;
+	private static final int ODOMETER_CENTER_Y_PERCENT_PORT = 20;
+	private static final double ODOMETER_RADIUS_PERCENT_PORT = 22.0;
 	
-	private static final float ODOMETER_CALIBRATION_NUMBER = 0.00f;
 	
 	private static final float idleRPM = 1500;
 	private static final int TACHOMETER_CENTER_X_PERCENT_PORT = 13;
 	private static final int TACHOMETER_CENTER_Y_PERCENT_PORT = 18;
-	private static final float TACHOMETER_SCALE_X_PORT = 0.4f;
-	private static final float TACHOMETER_SCALE_Y_PORT = 0.4f;
+	private static final double TACHOMETER_RADIUS_PERCENT_PORT = 12.0;
 	
-	private static final float TACHOMETER_CALIBRATION_NUMBER = 0.00f;
-	
+
+	private static final int FUELGUAGE_CENTER_X_PERCENT_PORT = 90;
+	private static final int FUELGUAGE_CENTER_Y_PERCENT_PORT = 15;
+	private static final double FUELGUAGE_RADIUS_PERCENT_PORT = 12.0;
+
+	private static final int TEMPGUAGE_CENTER_X_PERCENT_PORT = 90;
+	private static final int TEMPGUAGE_CENTER_Y_PERCENT_PORT = 30;
+	private static final double TEMPGUAGE_RADIUS_PERCENT_PORT = 12.0;
+
 	
 	// reading for this screen:
 	
@@ -66,17 +70,18 @@ public class ODBIIView extends SurfaceView implements SurfaceHolder.Callback {
 	 * 
 	 */
 	private Drawable mOdometerNeedle;
-	private int mOdometerNeedleWidth;
-	private int mOdometerNeedleHeight;
 	private Point odometerCenter;
 	
 	/** Image for the needle of tachometer:
 	 * 
 	 */
 	private Drawable mTachometerNeedle;
-	private int mTachometerNeedleWidth;
-	private int mTachometerNeedleHeight;
 	private Point tachometerCenter;	
+	
+	
+	private Point fuelGaugeCenter;
+	
+	private Point tempGaugeCenter;
 	
 	
 	
@@ -269,17 +274,11 @@ public class ODBIIView extends SurfaceView implements SurfaceHolder.Callback {
             // tachometer needle:
             mTachometerNeedle = context.getResources().getDrawable(
             		R.drawable.needle);
-            mTachometerNeedleWidth = mTachometerNeedle.getIntrinsicWidth();
-        	mTachometerNeedleHeight= mTachometerNeedle.getIntrinsicHeight();
             
             
             // odometer needle:
             mOdometerNeedle = context.getResources().getDrawable(
             		R.drawable.needle);
-            mOdometerNeedleWidth = mOdometerNeedle.getIntrinsicWidth();
-        	mOdometerNeedleHeight= mOdometerNeedle.getIntrinsicHeight();
-        	
-        	
         	
             
             Resources res = context.getResources();
@@ -316,7 +315,14 @@ public class ODBIIView extends SurfaceView implements SurfaceHolder.Callback {
             	a_y = (mCanvasHeight * TACHOMETER_CENTER_Y_PERCENT_PORT) / 100;
             	tachometerCenter = new Point(a_x, a_y);
             	
+            	a_x = (mCanvasWidth * FUELGUAGE_CENTER_X_PERCENT_PORT) / 100;
+            	a_y = (mCanvasHeight * FUELGUAGE_CENTER_Y_PERCENT_PORT) / 100;            	
+            	fuelGaugeCenter = new Point(a_x, a_y);
             	
+            	a_x = (mCanvasWidth * TEMPGUAGE_CENTER_X_PERCENT_PORT) / 100;
+            	a_y = (mCanvasHeight * TEMPGUAGE_CENTER_Y_PERCENT_PORT) / 100;            	
+            	tempGaugeCenter = new Point(a_x, a_y);
+
             	
             	Typeface typeface;
             	typeface = Typeface.create("sans", Typeface.BOLD);
@@ -389,7 +395,7 @@ public class ODBIIView extends SurfaceView implements SurfaceHolder.Callback {
 			// 120.0 --> 0
 			// 150.0 --> - ???
 			
-				float m = (180.0f - 0.0f) / (0.0f - 120.0f) + ODOMETER_CALIBRATION_NUMBER;
+				float m = (180.0f - 0.0f) / (0.0f - 120.0f);
 				float b = 180.0f;
 				//float y_x = m * mph + b;
 				return Math.round(m * mph + b);
@@ -419,27 +425,62 @@ public class ODBIIView extends SurfaceView implements SurfaceHolder.Callback {
 		}
 		private void drawDashBoard(Canvas canvas) {
 			// background:
+			//Rect r = new Rect(0, 0, mCanvasWidth, mCanvasHeight);
+			Paint p = new Paint();
+			Tachnometer tach = new Tachnometer();
+			Odometer odo = new Odometer();
+			FuelGauge fuel = new FuelGauge();
+			TempGauge temp = new TempGauge();
 			
-			canvas.drawBitmap(mBackgroundImage, 0, 0, null);
+			//canvas.drawBitmap(mBackgroundImage, 0, 0, null);
+			//p.setColor(Color.BLACK);
 			
+			//canvas.drawRect(r, paint);
+			canvas.drawARGB(255, 0, 0, 0);
 			
 			
 			Typeface typeface;
-			Tachnometer tach = new Tachnometer();
-        	typeface = Typeface.create("sans", Typeface.BOLD);
-        	Paint p = new Paint();
+			typeface = Typeface.create("sans", Typeface.BOLD);
+			
+			
+        	
+        	
 			p.setAntiAlias(true);
-			p.setColor(Color.YELLOW);
+			
 			p.setTextSize(18);
 			p.setTypeface(typeface);			
 			tach.drawTachnometer(	canvas, 
 									p, 
 									tachometerCenter, 
-									(double)mCanvasWidth / 8.0, 
+									(double)mCanvasWidth * TACHOMETER_RADIUS_PERCENT_PORT / 100.0, 
 									Math.PI, 0.0, //Math.PI / 8.0,
 									0, 8000,
 									8);
-			//canvas.save();
+			odo.drawOdometer(	canvas, 
+					p, 
+					odometerCenter, 
+					(double)mCanvasWidth * ODOMETER_RADIUS_PERCENT_PORT / 100.0, 
+					Math.PI, -Math.PI / 4.0,
+					0, 150,
+					16);
+			
+			
+			fuel.drawFuelGuage(	canvas, 
+					p, 
+					fuelGaugeCenter, 
+					(double)mCanvasWidth * FUELGUAGE_RADIUS_PERCENT_PORT / 100.0, 
+					Math.PI, 3.0 * Math.PI / 8.0,
+					0, 150,
+					4);
+			
+			temp.drawTempGauge(	canvas, 
+					p, 
+					tempGaugeCenter, 
+					(double)mCanvasWidth * TEMPGUAGE_RADIUS_PERCENT_PORT / 100.0, 
+					Math.PI, 3.0 * Math.PI / 8.0,
+					100, 260,
+					4);
+			//canvas.save();	
 						
 		}
 		private void doDraw(Canvas canvas) {

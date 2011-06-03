@@ -7,10 +7,10 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 
-public class Tachnometer {
 
-	Tachnometer() {}
-	void drawTachnometer(
+public class Odometer {
+	Odometer() {}
+	void drawOdometer(
 			Canvas canvas, 
 			Paint paint, 
 			Point center, 
@@ -21,20 +21,20 @@ public class Tachnometer {
 			double endingValue,
 			int    numberOfMajorIncrements)
 	{
-		int x_offsets[] = {5, 6, 6, 1, -4, -5, -10, -12};
-		int y_offsets[] = {5, 5, 8, 11, 13, 16, 16, 10};
+		
+		// Interpolate instead???
+		//                 0  1  2  3  4   5    6    7   8    9   10  11  12  13  14  15
+		int x_offsets[] = {5, 6, 6, 1, -4, -5, -10, -12, -10, -12,-25,-28,-30,-30,-30,-35};
+		int y_offsets[] = {5, 5, 8, 11, 13, 16, 16, 12,  14,  14,  14, 12, 10, 8,  8,  5};
+		
 		
 		paint.setColor(Color.WHITE);
-		Paint paintText = new Paint(paint);
 		
 		
+		Paint paint2 = new Paint(paint);
 		paint.setStrokeWidth(7);
 		
-		Paint paintThinLine = new Paint(paint);		
-		paintThinLine.setStrokeWidth(2);
-		
-		
-		
+		paint2.setStrokeWidth(2);
 		
 		//canvas.drawLine(0, 0, 500, 500, paint);
 		double inner1Radius = radius - (radius / 8.0);
@@ -44,39 +44,27 @@ public class Tachnometer {
 		double theta2 = startingAngle + increment / 2.0;
 		for (int i = 0; i < numberOfMajorIncrements; i++)
 		{
-			if (i > 5)
-			{
-				paint.setColor(Color.RED);
-				paint.setColor(Color.RED);
-			}
 			
-			// thick line:
+			
 			int startX = (int)(inner1Radius * Math.cos(theta) + (double)center.x);
 			int startY = (int)(inner1Radius * Math.sin(theta) + (double)center.y);
 			int stopX = (int)(radius * Math.cos(theta) + (double)center.x);
 			int stopY = (int)(radius * Math.sin(theta) + (double)center.y);
 			canvas.drawLine(startX, startY, stopX, stopY, paint);
+			canvas.drawText(NumberFormat.getInstance().format(i * 10), 
+					startX + x_offsets[i], startY + y_offsets[i], paint);
 
-			// text:
-			canvas.drawText(NumberFormat.getInstance().format(i), 
-					startX + x_offsets[i], startY + y_offsets[i], paintText);
-			
-
-			// thin line:
 			startX = (int)(inner2Radius * Math.cos(theta2) + (double)center.x);
 			startY = (int)(inner2Radius * Math.sin(theta2) + (double)center.y);
 			stopX = (int)(radius * Math.cos(theta2) + (double)center.x);
 			stopY = (int)(radius * Math.sin(theta2) + (double)center.y);
-			if (i != numberOfMajorIncrements - 1)
-				canvas.drawLine(startX, startY, stopX, stopY, paintThinLine);
 			
 
-			
+			if (i != numberOfMajorIncrements - 1)
+				canvas.drawLine(startX, startY, stopX, stopY, paint2);
 			
 			theta += increment;
 			theta2 += increment;
-			
-			
 			
 		}
 	}
