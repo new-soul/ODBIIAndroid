@@ -11,7 +11,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
-import android.graphics.Rect;
 import android.graphics.Typeface;
 
 
@@ -57,8 +56,8 @@ public class ODBIIView extends SurfaceView implements SurfaceHolder.Callback {
 	
 	private float mph = 0.1f;
 	private float rpm = 0;
-	private float gasLeft = 0.0f;
-	private float waterTemp = 0;
+	private float gasLeft = 8;
+	private float waterTemp = 150;
 	
 	
 	//Button gasButton;
@@ -68,14 +67,12 @@ public class ODBIIView extends SurfaceView implements SurfaceHolder.Callback {
 	
 	/** Image for the needle of odometer:
 	 * 
-	 */
-	private Drawable mOdometerNeedle;
+	 */	
 	private Point odometerCenter;
 	
 	/** Image for the needle of tachometer:
 	 * 
 	 */
-	private Drawable mTachometerNeedle;
 	private Point tachometerCenter;	
 	
 	
@@ -258,6 +255,10 @@ public class ODBIIView extends SurfaceView implements SurfaceHolder.Callback {
         
         Paint paint;
         
+        Odometer odo;
+        Tachnometer tach;
+        FuelGauge fuel;
+		TempGauge temp;
 
         public ODBIIThread (SurfaceHolder surfaceHolder, Context context,
         Handler handler) {
@@ -267,19 +268,6 @@ public class ODBIIView extends SurfaceView implements SurfaceHolder.Callback {
             mContext = context;
             df3 = new DecimalFormat("###");
             df4 = new DecimalFormat("####");
-            
-            
-            
-            // initialize other bitmaps:
-            // tachometer needle:
-            mTachometerNeedle = context.getResources().getDrawable(
-            		R.drawable.needle);
-            
-            
-            // odometer needle:
-            mOdometerNeedle = context.getResources().getDrawable(
-            		R.drawable.needle);
-        	
             
             Resources res = context.getResources();
             
@@ -302,9 +290,7 @@ public class ODBIIView extends SurfaceView implements SurfaceHolder.Callback {
                         mBackgroundImage, width, height, true);
                 
                 
-             // TODO Find the center of the odometer:
-
-            	
+             // TODO Find the center of the odometer:            	
             	int a_x = (mCanvasWidth * ODOMETER_CENTER_X_PERCENT_PORT) / 100;
             	int a_y = (mCanvasHeight * ODOMETER_CENTER_Y_PERCENT_PORT) / 100;
             	
@@ -384,67 +370,26 @@ public class ODBIIView extends SurfaceView implements SurfaceHolder.Callback {
 			
 			return valueStr;
 		}
-		private int getMPHDegrees()
-		{
 
-			if (mph >= 150.0)
-				return -45;
-			else
-			{
-			// 0.0 ---> 180
-			// 120.0 --> 0
-			// 150.0 --> - ???
-			
-				float m = (180.0f - 0.0f) / (0.0f - 120.0f);
-				float b = 180.0f;
-				//float y_x = m * mph + b;
-				return Math.round(m * mph + b);
-			}
-			
-			
-		}
-		private int getRPMDegrees()
-		{
-
-			if (rpm > 8001.0)
-				return -27;
-			else
-			{
-			// 0.0 ---> 180
-			// 120.0 --> 0
-			// 150.0 --> - ???
-				//       starting   ending  starting ending
-				//         angle    angle    value   value
-				float m = (190.0f - 10.0f) / (0.0f - 8000.0f);
-				float b = 190.0f;
-				//float y_x = m * mph + b;
-				return Math.round(m * rpm + b);
-			}
-			
-			
-		}
 		private void drawDashBoard(Canvas canvas) {
 			// background:
 			//Rect r = new Rect(0, 0, mCanvasWidth, mCanvasHeight);
 			Paint p = new Paint();
-			Tachnometer tach = new Tachnometer();
-			Odometer odo = new Odometer();
-			FuelGauge fuel = new FuelGauge();
-			TempGauge temp = new TempGauge();
+			
+			tach = new Tachnometer();
+			odo = new Odometer();
+			fuel = new FuelGauge();
+			temp = new TempGauge();
 			
 			//canvas.drawBitmap(mBackgroundImage, 0, 0, null);
-			//p.setColor(Color.BLACK);
+			p.setColor(Color.BLACK);
 			
 			//canvas.drawRect(r, paint);
-			canvas.drawARGB(255, 0, 0, 0);
-			
+			canvas.drawARGB(255, 0, 0, 0);			
 			
 			Typeface typeface;
 			typeface = Typeface.create("sans", Typeface.BOLD);
 			
-			
-        	
-        	
 			p.setAntiAlias(true);
 			
 			p.setTextSize(18);
@@ -453,8 +398,8 @@ public class ODBIIView extends SurfaceView implements SurfaceHolder.Callback {
 									p, 
 									tachometerCenter, 
 									(double)mCanvasWidth * TACHOMETER_RADIUS_PERCENT_PORT / 100.0, 
-									Math.PI, 0.0, //Math.PI / 8.0,
-									0, 8000,
+									Math.PI, Math.PI / 4.0,
+									0, 7000,
 									8);
 			odo.drawOdometer(	canvas, 
 					p, 
@@ -469,15 +414,15 @@ public class ODBIIView extends SurfaceView implements SurfaceHolder.Callback {
 					p, 
 					fuelGaugeCenter, 
 					(double)mCanvasWidth * FUELGUAGE_RADIUS_PERCENT_PORT / 100.0, 
-					Math.PI, 3.0 * Math.PI / 8.0,
-					0, 150,
+					Math.PI, Math.PI / 2.0,
+					0, 15,
 					4);
 			
 			temp.drawTempGauge(	canvas, 
 					p, 
 					tempGaugeCenter, 
 					(double)mCanvasWidth * TEMPGUAGE_RADIUS_PERCENT_PORT / 100.0, 
-					Math.PI, 3.0 * Math.PI / 8.0,
+					Math.PI, Math.PI / 2.0,
 					100, 260,
 					4);
 			//canvas.save();	
@@ -485,99 +430,35 @@ public class ODBIIView extends SurfaceView implements SurfaceHolder.Callback {
 		}
 		private void doDraw(Canvas canvas) {
 			
-			// canvas.saveLayer(left, top, right, bottom, paint, saveFlags)
-			drawDashBoard(canvas);
-
+			// canvas.saveLayer(left, top, right, bottom, paint, saveFlags)		
+			drawDashBoard(canvas);			
+			
+			paint.setTextSize(22);
+			paint.setColor(Color.CYAN);
 			
 			
 			
-			
-			// background:
-			/*
-			canvas.drawBitmap(mBackgroundImage, 0, 0, null);
-			
-			Typeface typeface;
-			Tachnometer tach = new Tachnometer();
-        	typeface = Typeface.create("sans", Typeface.BOLD);
-        	Paint p = new Paint();
-			p.setAntiAlias(true);
-			p.setColor(Color.YELLOW);
-			p.setTextSize(24);
-			p.setTypeface(typeface);			
-			tach.drawTachnometer(	canvas, 
-									p, 
-									tachometerCenter, 
-									mCanvasWidth / 5, 
-									180, -10,
-									0, 8000,
-									1000);
-			
-			*/
-			
-			/*
-			
-			// Tachometer needle:
-			canvas.save();
-			int rpmLocX = (int)((float)tachometerCenter.x / TACHOMETER_SCALE_X_PORT);
-			int rpmLocY = (int)((float)tachometerCenter.y / TACHOMETER_SCALE_Y_PORT);			
-			
-			int rpmLocX_txt = (int)((float)tachometerCenter.x / TACHOMETER_SCALE_X_PORT) - percentWidth(15);
-			int rpmLocY_txt = (int)((float)tachometerCenter.y / TACHOMETER_SCALE_Y_PORT) - percentHeight(16);
-			canvas.drawText(get4digit(rpm), rpmLocX_txt, rpmLocY_txt, paint);
-			
-			
-			mTachometerNeedle.setBounds(tachometerCenter.x, tachometerCenter.y,
-					tachometerCenter.x + mTachometerNeedleWidth, 
-					tachometerCenter.y + mTachometerNeedleHeight);
-			
-			//canvas.rotate(getMPHDegrees(), odometerCenter.x, (odometerCenter.y + (mOdometerNeedleHeight / 2)));
-			canvas.scale(TACHOMETER_SCALE_X_PORT, TACHOMETER_SCALE_Y_PORT);			
-			canvas.translate(rpmLocX, rpmLocY);			
-			canvas.rotate(-getRPMDegrees(), tachometerCenter.x, (tachometerCenter.y + (mTachometerNeedleHeight / 2)));
-			mTachometerNeedle.draw(canvas);
-			canvas.drawCircle(tachometerCenter.x, (tachometerCenter.y + (mTachometerNeedleHeight / 2)), 10, paint);
-			*/
-			/*
-			 * private static final int TACHOMETER_CENTER_X_PERCENT_PORT = 10;
-	private static final int TACHOMETER_CENTER_Y_PERCENT_PORT = 15;
-	private static final float TACHOMETER_SCALE_X_PORT = 0.8f;
-	private static final float TACHOMETER_SCALE_Y_PORT = 0.8f;
-			 */
-			
-			//canvas.restore();
-			// Odometer needle:
-			//canvas.save();
-			/*
-			// Miles per hour:
-			int mphLocX = (int)((float)odometerCenter.x / ODOMETER_SCALE_X_PORT);
-			int mphLocY = (int)((float)odometerCenter.y / ODOMETER_SCALE_Y_PORT);			
-			
-			int mphLocX_txt = (int)((float)odometerCenter.x / ODOMETER_SCALE_X_PORT) - percentWidth(5);
-			int mphLocY_txt = (int)((float)odometerCenter.y / ODOMETER_SCALE_Y_PORT) + percentHeight(3);
+			// Odometer:
+			int mphLocX_txt = odometerCenter.x - percentWidth(5);
+			int mphLocY_txt = odometerCenter.y + percentHeight(3);
 			canvas.drawText(get3digit(mph), mphLocX_txt, mphLocY_txt, paint);
+			odo.drawNeedle(canvas, (double)mph);
 			
 			
-			mOdometerNeedle.setBounds(odometerCenter.x, odometerCenter.y,
-					odometerCenter.x + mOdometerNeedleWidth, 
-					odometerCenter.y + mOdometerNeedleHeight);
-			
-			//canvas.rotate(getMPHDegrees(), odometerCenter.x, (odometerCenter.y + (mOdometerNeedleHeight / 2)));
-			canvas.scale(ODOMETER_SCALE_X_PORT, ODOMETER_SCALE_Y_PORT);			
-			canvas.translate(mphLocX, mphLocY);			
-			canvas.rotate(-getMPHDegrees(), odometerCenter.x, (odometerCenter.y + (mOdometerNeedleHeight / 2)));
-			mOdometerNeedle.draw(canvas);
-			canvas.drawCircle(odometerCenter.x, (odometerCenter.y + (mOdometerNeedleHeight / 2)), 10, paint);
-			*/
-			//canvas.restore();
+			// Tachometer:
+			int rpmLocX_txt = tachometerCenter.x - percentWidth(5);
+			int rpmLocY_txt = tachometerCenter.y + percentHeight(3);
+			canvas.drawText(get4digit(rpm), rpmLocX_txt, rpmLocY_txt, paint);
+			tach.drawNeedle(canvas, (double)rpm);
 			
 			
 
-			// Fuel gauge:
-			
+			// Fuel:
+			fuel.drawNeedle(canvas, 10.0);
 			
 			
 			// Water temperature:
-			
+			temp.drawNeedle(canvas, 101.0);
 			
 			
 			
@@ -654,16 +535,23 @@ public class ODBIIView extends SurfaceView implements SurfaceHolder.Callback {
 			if ((gasPedalOn) && (engineOn))
 			{
 				mph += fullAccel / 2.0;
+				rpm += 100;
 			}
 			else
 			{
-				mph -= (mph <= 1.0)?0.0:minDecel / 2.0;
-			}
-			
+				mph -= minDecel / 2.0;
+			}			
 			if (brakePedalOn)
 			{
-				mph += fullDecel / 2.0;
+				mph -= fullDecel / 2.0;
 			}
+			
+			// do not let speed go past 150 or less than zero:
+			mph = (mph > 150.0)?150.0f:mph;
+			mph = (mph < 0.0)?0.0f:mph;
+			
+			
+			
 		}
 		@Override
 		public void run()

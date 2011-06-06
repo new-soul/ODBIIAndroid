@@ -8,8 +8,11 @@ import android.graphics.Paint;
 import android.graphics.Point;
 
 
-public class Odometer {
+public class Odometer extends Gauge {
+	
 	Odometer() {}
+	
+		
 	void drawOdometer(
 			Canvas canvas, 
 			Paint paint, 
@@ -21,6 +24,18 @@ public class Odometer {
 			double endingValue,
 			int    numberOfMajorIncrements)
 	{
+		double increment = -(endingAngle - startingAngle) / (double)(numberOfMajorIncrements - 1);
+		
+		minValue = startingValue;
+		maxValue = endingValue;
+		
+		minAngle = startingAngle;		
+		maxAngle = endingAngle;
+		
+		r = radius;
+		c = center;
+		
+		
 		
 		// Interpolate instead???
 		//                 0  1  2  3  4   5    6    7   8    9   10  11  12  13  14  15
@@ -39,7 +54,7 @@ public class Odometer {
 		//canvas.drawLine(0, 0, 500, 500, paint);
 		double inner1Radius = radius - (radius / 8.0);
 		double inner2Radius = radius - (radius / 12.0);
-		double increment = -(endingAngle - startingAngle) / (double)numberOfMajorIncrements;
+		
 		double theta = startingAngle;
 		double theta2 = startingAngle + increment / 2.0;
 		for (int i = 0; i < numberOfMajorIncrements; i++)

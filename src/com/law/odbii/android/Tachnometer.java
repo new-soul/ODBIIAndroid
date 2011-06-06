@@ -7,9 +7,15 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 
-public class Tachnometer {
+public class Tachnometer extends Gauge {
+	
+	
+	
 
 	Tachnometer() {}
+	
+	
+	
 	void drawTachnometer(
 			Canvas canvas, 
 			Paint paint, 
@@ -21,8 +27,24 @@ public class Tachnometer {
 			double endingValue,
 			int    numberOfMajorIncrements)
 	{
-		int x_offsets[] = {5, 6, 6, 1, -4, -5, -10, -12};
-		int y_offsets[] = {5, 5, 8, 11, 13, 16, 16, 10};
+		double increment = -(endingAngle - startingAngle) / (double)(numberOfMajorIncrements - 1);
+		
+		
+		minValue = startingValue;
+		maxValue = endingValue; // + increment;
+		
+		minAngle = startingAngle;		
+		maxAngle = endingAngle;
+		
+		r = radius;
+		c = center;
+		
+		
+		
+		
+		
+		int x_offsets[] = {5, 6, 6, 1, -4, -5, -10, -12,0};
+		int y_offsets[] = {5, 5, 8, 11, 13, 16, 16, 10,0};
 		
 		paint.setColor(Color.WHITE);
 		Paint paintText = new Paint(paint);
@@ -39,7 +61,7 @@ public class Tachnometer {
 		//canvas.drawLine(0, 0, 500, 500, paint);
 		double inner1Radius = radius - (radius / 8.0);
 		double inner2Radius = radius - (radius / 12.0);
-		double increment = -(endingAngle - startingAngle) / (double)numberOfMajorIncrements;
+		
 		double theta = startingAngle;
 		double theta2 = startingAngle + increment / 2.0;
 		for (int i = 0; i < numberOfMajorIncrements; i++)
