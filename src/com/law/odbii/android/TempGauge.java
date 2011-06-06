@@ -2,15 +2,24 @@ package com.law.odbii.android;
 
 import java.text.NumberFormat;
 
+import android.content.Context;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 
 public class TempGauge extends Gauge {
 	
+	private Drawable mWaterIcon;
 	
-	TempGauge() {}
+	
+	TempGauge(Context context) {
+		
+		mWaterIcon = context.getResources().
+			getDrawable(R.drawable.water);
+	}
 
 	void drawTempGauge(
 			Canvas canvas, 
@@ -80,6 +89,11 @@ public class TempGauge extends Gauge {
 		y_pos = (int)(radius * Math.sin(theta) + (double)center.y);
 		canvas.drawText(NumberFormat.getInstance().format(endingValue), 
 				x_pos - 27, y_pos + 5, paintText);
+
+		//paint.setColor(Color.GREEN);
+		//canvas.drawRect(x_pos - 15, y_pos + 15, x_pos + 10,  y_pos + 50, paintThinLine);
+		mWaterIcon.setBounds(x_pos - 15, y_pos + 15, x_pos + 10, y_pos + 50);
+		mWaterIcon.draw(canvas);
 
 	}
 }

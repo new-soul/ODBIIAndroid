@@ -10,6 +10,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Picture;
 import android.graphics.Point;
 import android.graphics.Typeface;
 
@@ -246,19 +247,23 @@ public class ODBIIView extends SurfaceView implements SurfaceHolder.Callback {
  
         /** Indicate whether the surface has been created & is ready to draw */
         private boolean mRun = false;
-        private boolean mFirstIn = true;
+        
  
         /** The state of the game. One of READY, RUNNING, PAUSE, LOSE, or WIN */
         private int mMode;
         
         private DecimalFormat df3, df4;
         
-        Paint paint;
         
-        Odometer odo;
-        Tachnometer tach;
-        FuelGauge fuel;
-		TempGauge temp;
+        private Picture background;
+        
+        
+        private Paint paint;
+        
+        private Odometer odo;
+        private Tachnometer tach;
+        private FuelGauge fuel;
+        private TempGauge temp;
 
         public ODBIIThread (SurfaceHolder surfaceHolder, Context context,
         Handler handler) {
@@ -372,19 +377,22 @@ public class ODBIIView extends SurfaceView implements SurfaceHolder.Callback {
 		}
 
 		private void drawDashBoard(Canvas canvas) {
+			
+			background = new Picture();
+			canvas = background.beginRecording(mCanvasWidth, mCanvasHeight);
 			// background:
 			//Rect r = new Rect(0, 0, mCanvasWidth, mCanvasHeight);
 			Paint p = new Paint();
 			
+			
 			tach = new Tachnometer();
 			odo = new Odometer();
-			fuel = new FuelGauge();
-			temp = new TempGauge();
+			fuel = new FuelGauge(mContext);
+			temp = new TempGauge(mContext);
 			
 			//canvas.drawBitmap(mBackgroundImage, 0, 0, null);
 			p.setColor(Color.BLACK);
 			
-			//canvas.drawRect(r, paint);
 			canvas.drawARGB(255, 0, 0, 0);			
 			
 			Typeface typeface;
@@ -425,13 +433,14 @@ public class ODBIIView extends SurfaceView implements SurfaceHolder.Callback {
 					Math.PI, Math.PI / 2.0,
 					100, 260,
 					4);
-			//canvas.save();	
+			background.endRecording();	
 						
 		}
+		
 		private void doDraw(Canvas canvas) {
 			
-			// canvas.saveLayer(left, top, right, bottom, paint, saveFlags)		
-			drawDashBoard(canvas);			
+			background.draw(canvas);
+			
 			
 			paint.setTextSize(22);
 			paint.setColor(Color.CYAN);
@@ -556,9 +565,10 @@ public class ODBIIView extends SurfaceView implements SurfaceHolder.Callback {
 		@Override
 		public void run()
 		{
+			final int DRAWDASHBOARD = 1;
 			final int UPDATEDASHBOARD = 2;
 			
-			int state = UPDATEDASHBOARD;
+			int state = DRAWDASHBOARD;
 			
 			while (mRun) {
 				Canvas c = null;
@@ -574,7 +584,10 @@ public class ODBIIView extends SurfaceView implements SurfaceHolder.Callback {
 												
 						switch (state)
 						{
-						
+						case DRAWDASHBOARD:
+							drawDashBoard(c);
+							state = UPDATEDASHBOARD;
+							break;
 						case UPDATEDASHBOARD:
 							updatePhysics();
 							doDraw(c);

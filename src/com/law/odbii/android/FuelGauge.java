@@ -1,14 +1,23 @@
 package com.law.odbii.android;
 
+import android.content.Context;
+
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
+import android.graphics.drawable.Drawable;
 
 public class FuelGauge extends Gauge {
 	
+	private Drawable mGasPumpIcon;
 	
-	FuelGauge() {}
+	FuelGauge(Context context) {
+		mGasPumpIcon = context.getResources().
+			getDrawable(R.drawable.gas_pump);
+		
+		
+	}
 	
 	void drawFuelGuage(
 			Canvas canvas, 
@@ -82,5 +91,13 @@ public class FuelGauge extends Gauge {
 		y_pos = (int)(radius * Math.sin(theta) + (double)center.y);
 		canvas.drawText("F", 
 				x_pos - 27, y_pos + 5, paintText);
+		
+		//paint.setColor(Color.GREEN);
+		//canvas.drawRect(x_pos - 15, y_pos + 15, x_pos + 10,  y_pos + 50, paintThinLine);
+		
+		mGasPumpIcon.setBounds(x_pos - 15, y_pos + 15, x_pos + 10, y_pos + 50);
+		mGasPumpIcon.draw(canvas);
+
+		
 	}
 }
