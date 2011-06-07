@@ -3,5 +3,6 @@
     
     <string name="app_name">ODBIIApp</string>
     <string name="menu_exit">Exit</string>
+    <string name="status_text"></string>
     
 </resources>

@@ -4,8 +4,11 @@ package com.law.odbii.android;
 import com.law.odbii.android.ODBIIView.ODBIIThread;
 
 import android.app.Activity;
+//import android.content.Context;
+//import android.net.wifi.WifiInfo;
+//import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.util.Log;
+//import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -13,6 +16,7 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 
 import android.widget.Button;
+import android.widget.TextView;
 //import android.widget.TextView;
 
 public class ODBIIApp extends Activity {
@@ -58,13 +62,29 @@ public class ODBIIApp extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        Log.w(this.getClass().getName(), "Setting content view:");
         setContentView(R.layout.main);
-        Log.w(this.getClass().getName(), "OK!");
         
         
         mODBIIView = (ODBIIView)findViewById(R.id.odbii);
         mODBIIThread = mODBIIView.getThread();
+        
+        // status text:
+        mODBIIView.setTextStatusView((TextView) findViewById(R.id.status));
+        mODBIIView.setTextModeView((TextView) findViewById(R.id.simulation));
+        
+        
+        mODBIIView.setStatus("No WIFI");
+        mODBIIView.setMode("SIMULATION MODE");
+        //WifiManager wifi = (WifiManager)getSystemService(Context.WIFI_SERVICE);
+        //WifiInfo info = wifi.getConnectionInfo();
+        
+        /*
+        if (info.getBSSID() == null)
+        	mODBIIView.setStatus("No WIFI");
+        else
+        	mODBIIView.setStatus(info.getBSSID());
+        */	
+        
         
         // set engine start button:
         Button startEngineButton = (Button)findViewById(R.id.start_button);
@@ -77,26 +97,9 @@ public class ODBIIApp extends Activity {
         // set gas button:
         Button gasButton = (Button)findViewById(R.id.gas_button);
         gasButton.setOnTouchListener(new GasButtonListener());
-       
         
         
-        
-        
-        //mODBIIView.setTextView((TextView) findViewById(R.id.frameLayout1));
-        
-        
-        
-        if (savedInstanceState == null)
-        {
-        	mODBIIThread.setState(ODBIIThread.STATE_READY);
-        	Log.w(this.getClass().getName(), "SIS is null");
-        }
-        else
-        {
-        	mODBIIThread.restoreState(savedInstanceState);
-        	Log.w(this.getClass().getName(), "SIS is nonnull");
-        	
-        }
+        //
         
         
         
@@ -111,8 +114,6 @@ public class ODBIIApp extends Activity {
     protected void onSaveInstanceState(Bundle outState) {
         // just have the View's thread save its state into our Bundle
         super.onSaveInstanceState(outState);
-        //mODBIIThread.saveState(outState);
-        Log.w(this.getClass().getName(), "SIS called");
     }
     
     class GasButtonListener implements OnTouchListener
@@ -123,15 +124,15 @@ public class ODBIIApp extends Activity {
 			// TODO Auto-generated method stub
 			if (event.getAction() == MotionEvent.ACTION_CANCEL)
 			{
-				mODBIIView.footIsOffGas();
+				mODBIIThread.footIsOffGas();
 			}
 			else if (event.getAction() == MotionEvent.ACTION_DOWN)
 			{
-				mODBIIView.footIsOnGas();
+				mODBIIThread.footIsOnGas();
 			}
 			else
 			{
-				mODBIIView.footIsOffGas();
+				mODBIIThread.footIsOffGas();
 			}
 			
 			return false;
@@ -145,15 +146,15 @@ public class ODBIIApp extends Activity {
 			// TODO Auto-generated method stub
 			if (event.getAction() == MotionEvent.ACTION_CANCEL)
 			{
-				mODBIIView.footIsOffBrake();
+				mODBIIThread.footIsOffBrake();
 			}
 			else if (event.getAction() == MotionEvent.ACTION_DOWN)
 			{
-				mODBIIView.footIsOnBrake();
+				mODBIIThread.footIsOnBrake();
 			}
 			else
 			{
-				mODBIIView.footIsOffBrake();
+				mODBIIThread.footIsOffBrake();
 			}
 			
 			return false;
@@ -167,7 +168,7 @@ public class ODBIIApp extends Activity {
 			// TODO Auto-generated method stub
 			if (event.getAction() == MotionEvent.ACTION_DOWN)
 			{
-				mODBIIView.toggleEngine();
+				mODBIIThread.toggleEngine();
 			}
 			
 			return false;

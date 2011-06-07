@@ -5,22 +5,41 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
+    >    
+    	<LinearLayout android:id="@+id/linearLayout1" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent">
+    	<!-- Layout display and buttons:  -->
+    		<LinearLayout android:id="@+id/linearLayout2" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_weight="20">
+	        	<com.law.odbii.android.ODBIIView
+    				android:id="@+id/odbii"    			
+      				android:layout_width="match_parent"
+      				android:layout_height="wrap_content"      			
+      				/>
+    		</LinearLayout>
+			<LinearLayout android:id="@+id/linearLayout5" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="#555555" android:layout_weight="1"> 		
+				<Button android:id="@+id/start_button" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Engine" android:maxHeight="50px"></Button>
+				<Button android:id="@+id/brake_button" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Brake" android:maxHeight="50px"></Button>
+ 				<Button android:id="@+id/gas_button"   android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Gas" android:maxHeight="50px"></Button>
+    		</LinearLayout>
+    	</LinearLayout>
+     <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+        <LinearLayout android:id="@+id/linearLayout4" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="#AAAAFF" android:layout_centerInParent="true"> 		
+ 			<TextView android:text="status" android:id="@+id/status" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_horizontal" android:textColor="#000000" android:textSize="16pt" android:layout_marginTop="10px" android:layout_marginBottom="10px" />
+ 			<TextView android:text="Simulation Mode" android:id="@+id/simulation" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_horizontal" android:textColor="#000000" android:textStyle="bold" android:textSize="20pt" android:layout_marginTop="10px" android:layout_marginBottom="10px" />        
+        </LinearLayout>
+    </RelativeLayout>
+    <!-- 
     <LinearLayout android:id="@+id/linearLayout1" android:orientation="vertical" android:layout_width="match_parent" android:layout_height="match_parent">
-        <LinearLayout android:id="@+id/linearLayout3" android:layout_width="match_parent" android:layout_height="wrap_content">
-        	<com.law.odbii.android.ODBIIView
-    			android:id="@+id/odbii"    			
-      			android:layout_width="match_parent"
-      			android:layout_height="800px"
-      			/>
+        
+        <LinearLayout android:id="@+id/linearLayout4" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="#AAAAFF" android:layout_weight="1"> 		
+ 			<TextView android:text="status" android:id="@+id/status" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_horizontal" android:textColor="#000000" android:textSize="16pt" android:layout_marginTop="10px" android:layout_marginBottom="10px" />
         </LinearLayout>
-        <LinearLayout android:id="@+id/linearLayout2" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content"> 		
- 			<Button android:id="@+id/start_button" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Engine" android:maxHeight="50px"></Button>
-	 		<Button android:id="@+id/brake_button" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Brake" android:maxHeight="50px"></Button>
- 			<Button android:id="@+id/gas_button"   android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Gas" android:maxHeight="50px"></Button>
- 			<TextView android:text="     Simulation Mode" android:id="@+id/textView1" android:layout_width="wrap_content" android:layout_height="wrap_content"></TextView>        
+        <LinearLayout android:id="@+id/linearLayout3" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:background="#AAAAFF" android:layout_weight="2"> 		
+ 			<TextView android:text="Simulation Mode" android:id="@+id/simulation" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_horizontal" android:textColor="#000000" android:textStyle="bold" android:textSize="20pt" android:layout_marginTop="10px" android:layout_marginBottom="10px" />        
         </LinearLayout>
+        
     </LinearLayout>
- 
+  -->
 	  	
 </FrameLayout>
